@@ -1,10 +1,27 @@
 #include "Transmitter.h"
 
-#include <Arduino.h>
-
 namespace Dooya
 {
 	static const uint8_t PIN_TRANSMITTER_DATA{ 4 };
+
+	void Buffer::Put(const byte& data)
+	{
+		mData[mDataEnd] = data;
+		mBitCounter[mDataEnd] = 0xFF;
+		mDataEnd++;
+	}
+
+	bool Buffer::Get(bool& bit)
+	{
+		if (mDataBegin == mDataEnd)
+			return false;
+		bit = mData[mDataBegin] & 0x80;
+		mData[mDataBegin] = mData[mDataBegin] << 1;
+		mBitCounter[mDataBegin] = mBitCounter[mDataBegin] << 1;
+		if (!mBitCounter[mDataBegin])
+			mDataBegin++;
+		return true;
+	}
 
 	Transmitter::Transmitter()
 	{
@@ -27,7 +44,7 @@ namespace Dooya
 			
 		// ”станавливаем число, до которого нужно считать
 		// OCR2A - регистр сравнени€ A, при совпадении с которым будет генеритьс€ прерывание, максимум 255 (0xFF)
-		OCR2A = 83;
+		OCR2A = 69;
 
 		// –азрешаем прерывание при совпадении с регистром A
 		// TIMSK2 - регистр включени€ прерывани€
@@ -41,11 +58,27 @@ namespace Dooya
 		// --------------------------------------------------
 		//  онфигурируем пины
 		pinMode(PIN_TRANSMITTER_DATA, OUTPUT);
+		digitalWrite(PIN_TRANSMITTER_DATA, LOW);
 	}
 
 	void Transmitter::Interrupt()
 	{
-		digitalWrite(PIN_TRANSMITTER_DATA, HIGH - digitalRead(PIN_TRANSMITTER_DATA));
+		if (mTransmit)
+		{
+			bool bit{ false };
+			mTransmit = mBuffer.Get(bit);
+			digitalWrite(PIN_TRANSMITTER_DATA, bit ? HIGH : LOW);
+		}
+	}
+
+	void Transmitter::Put(const byte& data)
+	{
+		mBuffer.Put(data);
+	}
+
+	void Transmitter::Transmit()
+	{
+		mTransmit = true;
 	}
 
 	ISR(TIMER2_COMPA_vect)
