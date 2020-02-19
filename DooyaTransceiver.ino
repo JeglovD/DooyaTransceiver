@@ -3,11 +3,12 @@
 
 void setup() 
 {
-	Dooya::Receiver::Instance();
 }
 
 void loop()
 {
+	Dooya::Receiver::Instance().IsData();
+
 	//for (int i = 1; i <= 3; i++)
 	//{
 	//	Dooya::Transmitter::Instance().Put(0xff);
