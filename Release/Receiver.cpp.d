@@ -1,6 +1,7 @@
-C:\Users\DJ\AppData\Local\Temp\VMBuilds\DooyaTransceiver\pro_8MHzatmega328\Release\DooyaTransceiver.cpp.o: \
- C:\Users\DJ\AppData\Local\Temp\VMBuilds\DooyaTransceiver\pro_8MHzatmega328\Release\DooyaTransceiver.cpp \
- C:\Program\ Files\ (x86)\Arduino\hardware\arduino\avr\cores\arduino/arduino.h \
+C:\Users\DJ\AppData\Local\Temp\VMBuilds\DooyaTransceiver\pro_8MHzatmega328\Release\Receiver.cpp.o: \
+ C:\Users\DJ\AppData\Local\Temp\VMBuilds\DooyaTransceiver\pro_8MHzatmega328\Release\Receiver.cpp \
+ C:\Users\DJ\AppData\Local\Temp\VMBuilds\DooyaTransceiver\pro_8MHzatmega328\Release\Receiver.h \
+ C:\Program\ Files\ (x86)\Arduino\hardware\arduino\avr\cores\arduino/Arduino.h \
  C:\Program\ Files\ (x86)\Arduino\hardware\arduino\avr\cores\arduino/binary.h \
  C:\Program\ Files\ (x86)\Arduino\hardware\arduino\avr\cores\arduino/WCharacter.h \
  C:\Program\ Files\ (x86)\Arduino\hardware\arduino\avr\cores\arduino/WString.h \
@@ -11,7 +12,4 @@ C:\Users\DJ\AppData\Local\Temp\VMBuilds\DooyaTransceiver\pro_8MHzatmega328\Relea
  C:\Program\ Files\ (x86)\Arduino\hardware\arduino\avr\cores\arduino/USBAPI.h \
  C:\Program\ Files\ (x86)\Arduino\hardware\arduino\avr\cores\arduino/Arduino.h \
  C:\Program\ Files\ (x86)\Arduino\hardware\arduino\avr\variants\eightanaloginputs/pins_arduino.h \
- c:\program\ files\ (x86)\arduino\hardware\arduino\avr\variants\standard\pins_arduino.h \
- C:\Users\DJ\AppData\Local\Temp\VMBuilds\DooyaTransceiver\pro_8MHzatmega328\Release\Receiver.h \
- C:\Users\DJ\AppData\Local\Temp\VMBuilds\DooyaTransceiver\pro_8MHzatmega328\Release\Transmitter.h \
- C:\Program\ Files\ (x86)\Arduino\hardware\arduino\avr\cores\arduino/Arduino.h
+ c:\program\ files\ (x86)\arduino\hardware\arduino\avr\variants\standard\pins_arduino.h
