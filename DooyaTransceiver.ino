@@ -2,12 +2,11 @@
 //#include "Transmitter.h"
 
 void setup() 
-{
-}
+{}
 
 void loop()
 {
-	Dooya::Receiver::Instance().IsData();
+	Dooya::Receiver::Instance().Check();
 
 	//for (int i = 1; i <= 3; i++)
 	//{

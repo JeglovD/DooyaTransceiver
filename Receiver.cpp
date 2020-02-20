@@ -13,7 +13,7 @@ namespace Dooya
 		mLowDuration = 0;
 	}
 
-	void SynchroWord::Check()
+	bool SynchroWord::Check()
 	{
 		bool check{ true };
 		if (!mHighDuration && mLowDuration)
@@ -27,20 +27,18 @@ namespace Dooya
 		}
 		if (!check)
 			Clear();
+		return mHighDuration && mLowDuration;
 	}
 
 	ReceiverBuffer::ReceiverBuffer()
 	{
 	}
 
-	void ReceiverBuffer::Check()
+	bool ReceiverBuffer::Check()
 	{
-		mSynchroWord.Check();
-	}
-
-	bool ReceiverBuffer::IsSet()
-	{
-		return mSynchroWord.IsSet();
+		if (mSynchroWord.Check())
+			return mData.Check(mSynchroWord.Duration());
+		return false;
 	}
 
 	void ReceiverBuffer::Clear()
@@ -48,11 +46,31 @@ namespace Dooya
 		mSynchroWord.Clear();
 	}
 
-	//ReceiverBuffer::Data::Data() :
-	//	mBegin{ 0 },
-	//	mEnd{ 0 }
-	//{
-	//}
+	Data::Data() :
+		mBegin{ 0 },
+		mEnd{ 0 }
+	{}
+
+	bool Data::Check(const unsigned long& synchro_word_duration)
+	{
+		//bool check{ true };
+		//if (mHighDuration[0] && mLowDuration[0])
+		//	check = false;
+		//if (mHighDuration[0] && mLowDuration[0])
+		//{
+		//	if (synchro_word_duration < mHighDuration[0] + mLowDuration[0])
+		//		check = false;
+		//	if (synchro_word_duration > (mHighDuration[0] + mLowDuration[0]) * 2)
+		//		check = false;
+		//}
+		//if (!check)
+		//{
+		//	mHighDuration[0] = 0;
+		//	mLowDuration[0] = 0;
+		//}
+		//return mHighDuration[0] && mLowDuration[0];
+		return true;
+	}
 
 	Receiver::Receiver():
 		mBuffer1{},
@@ -66,7 +84,7 @@ namespace Dooya
 		pinMode(PIN2, INPUT);
 		pinMode(PIN3, INPUT);
 		pinMode(PIN_TEST, OUTPUT);
-		
+
 		// --------------------------------------------------
 		// Инициализация прерываний
 		attachInterrupt(digitalPinToInterrupt(PIN2), Receiver::InterruptRising, RISING);
@@ -75,30 +93,24 @@ namespace Dooya
 
 	void Receiver::InterruptRising()
 	{
-		Receiver& receiver{ Receiver::Instance() };
+		Receiver& receiver = Receiver::Instance();
 		receiver.MicrosStore();
-		if (receiver.mBufferWorking.SynchroWord().IsSet())
-		{
-		}
+		if (receiver.mBufferWorking.SynchroWord().Check())
+			receiver.mBufferWorking.Data().SetLowDuration(receiver.mMicrosCurrent - receiver.mMicrosPrevious);
 		else
-		{
 			receiver.mBufferWorking.SynchroWord().SetLowDuration(receiver.mMicrosCurrent - receiver.mMicrosPrevious);
-			receiver.Check();
-		}
+		receiver.Check();
 	}
 
 	void Receiver::InterruptFalling()
 	{
-		Receiver& receiver{ Receiver::Instance() };
+		Receiver& receiver = Receiver::Instance();
 		receiver.MicrosStore();
-		if (receiver.mBufferWorking.SynchroWord().IsSet())
-		{
-		}
+		if (receiver.mBufferWorking.SynchroWord().Check())
+			receiver.mBufferWorking.Data().SetHighDuration(receiver.mMicrosCurrent - receiver.mMicrosPrevious);
 		else
-		{
 			receiver.mBufferWorking.SynchroWord().SetHighDuration(receiver.mMicrosCurrent - receiver.mMicrosPrevious);
-			receiver.Check();
-		}
+		receiver.Check();
 	}
 
 	void Receiver::MicrosStore()
@@ -107,41 +119,22 @@ namespace Dooya
 		mMicrosCurrent = micros();
 	}
 
-	void Receiver::Check()
+	bool Receiver::Check()
 	{
-		mBufferWorking.Check();
+		//digitalWrite(PIN_TEST, HIGH - digitalRead(PIN_TEST));
 
-		if (mBufferWorking.IsSet())
+		//if (mBufferWorking.Check())
 		{
-			digitalWrite(PIN_TEST, HIGH - digitalRead(PIN_TEST));
-
-			if (&mBufferWorking == &mBuffer1)
-			{
-				mBuffer2.Clear();
-				mBufferWorking = mBuffer2;
-			}
-			else
-			{
-				mBuffer1.Clear();
-				mBufferWorking = mBuffer1;
-			}
+			//if (&mBufferWorking == &mBuffer1)
+			//{
+			//	mBuffer2.Clear();
+			//	mBufferWorking = mBuffer2;
+			//}
+			//else
+			//{
+			//	mBuffer1.Clear();
+			//	mBufferWorking = mBuffer1;
+			//}
 		}
-	}
-
-	bool Receiver::IsData()
-	{
-	//	bool result;
-	//	if (&mBufferWorking == &mBuffer1)
-	//	{
-	//		result = mBuffer2.IsSet();
-	//		//digitalWrite(PIN_TEST, HIGH - digitalRead(PIN_TEST));
-	//		mBuffer2.Clear();
-	//	}
-	//	else
-	//	{
-	//		result = mBuffer1.IsSet();
-	//		//digitalWrite(PIN_TEST, HIGH - digitalRead(PIN_TEST));
-	//		mBuffer1.Clear();
-	//	}
 	}
 }
