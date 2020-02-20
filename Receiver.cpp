@@ -2,7 +2,32 @@
 
 namespace Dooya
 {
-	static uint8_t PIN_TEST{ 9 };
+	SynchroWord::SynchroWord()
+	{
+		Clear();
+	}
+
+	void SynchroWord::Clear()
+	{
+		mHighDuration = 0;
+		mLowDuration = 0;
+	}
+
+	void SynchroWord::Check()
+	{
+		bool check{ true };
+		if (!mHighDuration && mLowDuration)
+			check = false;
+		if (mHighDuration && mLowDuration)
+		{
+			if (mHighDuration < mLowDuration * 2)
+				check = false;
+			if (mHighDuration > mLowDuration * 4)
+				check = false;
+		}
+		if (!check)
+			Clear();
+	}
 
 	ReceiverBuffer::ReceiverBuffer()
 	{
@@ -23,32 +48,11 @@ namespace Dooya
 		mSynchroWord.Clear();
 	}
 
-	ReceiverBuffer::SynchroWord::SynchroWord()
-	{
-		Clear();
-	}
-
-	void ReceiverBuffer::SynchroWord::Clear()
-	{
-		mHighDuration = 0;
-		mLowDuration = 0;
-	}
-
-	void ReceiverBuffer::SynchroWord::Check()
-	{
-		if (!mLowDuration)
-			return;
-		if (mHighDuration > mLowDuration * 2 &&
-			mHighDuration < mLowDuration * 4)
-			return;
-		Clear();
-	}
-	
-	ReceiverBuffer::Data::Data() :
-		mBegin{ 0 },
-		mEnd{ 0 }
-	{
-	}
+	//ReceiverBuffer::Data::Data() :
+	//	mBegin{ 0 },
+	//	mEnd{ 0 }
+	//{
+	//}
 
 	Receiver::Receiver():
 		mBuffer1{},
@@ -65,8 +69,8 @@ namespace Dooya
 		
 		// --------------------------------------------------
 		// Инициализация прерываний
-		attachInterrupt(digitalPinToInterrupt(PIN2), InterruptRising, RISING);
-		attachInterrupt(digitalPinToInterrupt(PIN3), InterruptFalling, FALLING);
+		attachInterrupt(digitalPinToInterrupt(PIN2), Receiver::InterruptRising, RISING);
+		attachInterrupt(digitalPinToInterrupt(PIN3), Receiver::InterruptFalling, FALLING);
 	}
 
 	void Receiver::InterruptRising()
@@ -109,6 +113,8 @@ namespace Dooya
 
 		if (mBufferWorking.IsSet())
 		{
+			digitalWrite(PIN_TEST, HIGH - digitalRead(PIN_TEST));
+
 			if (&mBufferWorking == &mBuffer1)
 			{
 				mBuffer2.Clear();
@@ -124,18 +130,18 @@ namespace Dooya
 
 	bool Receiver::IsData()
 	{
-		bool result;
-		if (&mBufferWorking == &mBuffer1)
-		{
-			result = mBuffer2.IsSet();
-			digitalWrite(PIN_TEST, HIGH - digitalRead(PIN_TEST));
-			mBuffer2.Clear();
-		}
-		else
-		{
-			result = mBuffer1.IsSet();
-			digitalWrite(PIN_TEST, HIGH - digitalRead(PIN_TEST));
-			mBuffer1.Clear();
-		}
+	//	bool result;
+	//	if (&mBufferWorking == &mBuffer1)
+	//	{
+	//		result = mBuffer2.IsSet();
+	//		//digitalWrite(PIN_TEST, HIGH - digitalRead(PIN_TEST));
+	//		mBuffer2.Clear();
+	//	}
+	//	else
+	//	{
+	//		result = mBuffer1.IsSet();
+	//		//digitalWrite(PIN_TEST, HIGH - digitalRead(PIN_TEST));
+	//		mBuffer1.Clear();
+	//	}
 	}
 }
